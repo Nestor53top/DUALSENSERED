@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace DualSenseRed
@@ -23,7 +24,7 @@ namespace DualSenseRed
             glow.GradientStops.Add(new GradientStop(Color.FromArgb(0x60, 0xFF, 0x1A, 0x3D), 0));
             glow.GradientStops.Add(new GradientStop(Colors.Transparent, 1));
 
-            var grid = (System.Windows.Controls.Grid)((StackPanel)BtnTap.Parent).Parent;
+            var grid = (Grid)((StackPanel)BtnTap.Parent).Parent;
             grid.Background = glow;
         }
     }
