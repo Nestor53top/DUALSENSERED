@@ -41,31 +41,94 @@ jobs:
       - name: Extract Zip
         run: Expand-Archive -Path ./DualSenseRed-Release.zip -DestinationPath ./run -Force
 
-      - name: Launch App & Screenshot
+      - name: Launch, Screenshot & Record
         shell: powershell
         run: |
           Add-Type -AssemblyName System.Windows.Forms
           Add-Type -AssemblyName System.Drawing
+          Add-Type @"
+          using System;
+          using System.Runtime.InteropServices;
+          public class WinAPI {
+              [DllImport("user32.dll")] public static extern bool SetCursorPos(int X, int Y);
+              [DllImport("user32.dll")] public static extern void mouse_event(uint dwFlags, int dx, int dy, uint dwData, IntPtr dwExtraInfo);
+              public const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
+              public const uint MOUSEEVENTF_LEFTUP   = 0x0004;
+          }
+          "@
 
+          # Find and launch exe
           $exe = Get-ChildItem -Path ./run -Filter "DualSenseRed.exe" -Recurse | Select-Object -First 1
           if (-not $exe) { Write-Error "EXE not found"; exit 1 }
 
           Start-Process -FilePath $exe.FullName
-          Start-Sleep -Seconds 5
+          Start-Sleep -Seconds 4
 
+          # Take screenshot BEFORE tap
           $bounds = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
-          $bitmap = New-Object System.Drawing.Bitmap($bounds.Width, $bounds.Height)
+          $bitmap = New-Object System.Drawing.Bitmap(1920, 1080)
           $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
           $graphics.CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
-          $bitmap.Save("./screenshot.png")
-          $graphics.Dispose()
+          $bitmap.Save("./screenshot_before.png")
           $bitmap.Dispose()
+          $graphics.Dispose()
+          Write-Host "Screenshot before tap saved."
 
-          Write-Host "Screenshot saved."
+          # Start ffmpeg recording in background
+          $ffmpeg = Get-Command ffmpeg -ErrorAction SilentlyContinue
+          if ($ffmpeg) {
+              Start-Process -FilePath "ffmpeg" -ArgumentList "-f gdigrab -framerate 30 -i desktop -t 6 -pix_fmt yuv420p -c:v libx264 -preset ultrafast ./recording.mp4" -NoNewWindow -PassThru | Out-Null
+              Start-Sleep -Seconds 1
+          }
 
-      - name: Upload Screenshot
+          # Move cursor to center of screen and click TAP button
+          $screenW = $bounds.Width
+          $screenH = $bounds.Height
+          $centerX = [int]($screenW / 2)
+          $centerY = [int]($screenH / 2) + 30
+
+          [WinAPI]::SetCursorPos($centerX, $centerY)
+          Start-Sleep -Milliseconds 200
+          [WinAPI]::mouse_event([WinAPI]::MOUSEEVENTF_LEFTDOWN, 0, 0, 0, [IntPtr]::Zero)
+          Start-Sleep -Milliseconds 50
+          [WinAPI]::mouse_event([WinAPI]::MOUSEEVENTF_LEFTUP, 0, 0, 0, [IntPtr]::Zero)
+          Write-Host "TAP clicked."
+
+          Start-Sleep -Seconds 3
+
+          # Take screenshot AFTER tap
+          $bitmap2 = New-Object System.Drawing.Bitmap(1920, 1080)
+          $graphics2 = [System.Drawing.Graphics]::FromImage($bitmap2)
+          $graphics2.CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
+          $bitmap2.Save("./screenshot_after.png")
+          $bitmap2.Dispose()
+          $graphics2.Dispose()
+          Write-Host "Screenshot after tap saved."
+
+          Start-Sleep -Seconds 2
+
+          # Stop ffmpeg
+          Get-Process ffmpeg -ErrorAction SilentlyContinue | Stop-Process -Force
+          Start-Sleep -Seconds 1
+          Write-Host "Recording stopped."
+
+      - name: Upload Screenshot Before
         uses: actions/upload-artifact@v4
         with:
-          name: DualSenseRed-Screenshot
-          path: ./screenshot.png
+          name: Screenshot-Before-Tap
+          path: ./screenshot_before.png
+          retention-days: 30
+
+      - name: Upload Screenshot After
+        uses: actions/upload-artifact@v4
+        with:
+          name: Screenshot-After-Tap
+          path: ./screenshot_after.png
+          retention-days: 30
+
+      - name: Upload Video
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tap-Recording
+          path: ./recording.mp4
           retention-days: 30

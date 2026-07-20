@@ -1,272 +1,40 @@
 <Window x:Class="DualSenseRed.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="DualSense Red" Height="650" Width="900"
+        Title="DualSense Red" Height="320" Width="480"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource BgDark}"
-        ResizeMode="CanMinimize"
-        FontFamily="{StaticResource PixelFont}">
-
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="0" GlassFrameThickness="0" ResizeBorderThickness="0"/>
-    </WindowChrome.WindowChrome>
+        Background="#000000"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <Grid.Effect>
+            <DropShadowEffect BlurRadius="80" ShadowDepth="0" Color="#E5143C" Opacity="0.6"/>
+        </Grid.Effect>
 
-        <!-- Title Bar -->
-        <Border Grid.Row="0" Background="{StaticResource BgPanel}" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,0,0,1">
-            <Grid>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
-                    <TextBlock Text="DUAL" Foreground="{StaticResource RedPrimary}" FontSize="13" FontWeight="Bold"/>
-                    <TextBlock Text="SENSE" Foreground="{StaticResource TextWhite}" FontSize="13" FontWeight="Bold"/>
-                    <TextBlock Text=" RED" Foreground="{StaticResource RedPrimary}" FontSize="13" FontWeight="Bold"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button x:Name="BtnMinimize" Content="&#xE921;" FontFamily="Segoe MDL2 Assets" Width="40" Height="40"
-                            Background="Transparent" Foreground="{StaticResource TextGray}" BorderThickness="0"
-                            Click="BtnMinimize_Click"/>
-                    <Button x:Name="BtnClose" Content="&#xE8BB;" FontFamily="Segoe MDL2 Assets" Width="40" Height="40"
-                            Background="Transparent" Foreground="{StaticResource TextGray}" BorderThickness="0"
-                            Click="BtnClose_Click"/>
-                </StackPanel>
-            </Grid>
-        </Border>
+        <Grid.Background>
+            <RadialGradientBrush GradientOrigin="0.5,0.6" Center="0.5,0.5" RadiusX="0.6" RadiusY="0.6">
+                <GradientStop Color="#30E5143C" Offset="0"/>
+                <GradientStop Color="#00000000" Offset="1"/>
+            </RadialGradientBrush>
+        </Grid.Background>
 
-        <!-- Main Content -->
-        <Grid Grid.Row="1" Margin="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="Hello" Foreground="White" FontSize="48" FontWeight="Light"
+                       HorizontalAlignment="Center" FontFamily="{StaticResource PixelFont}"/>
 
-            <!-- Sidebar -->
-            <Border Grid.Column="0" Background="{StaticResource BgPanel}" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,0,1,0">
-                <StackPanel Margin="0,16,0,0">
-                    <TextBlock Text="MENU" Foreground="{StaticResource TextGray}" FontSize="10" Margin="16,0,0,12" FontWeight="Bold"/>
-
-                    <RadioButton x:Name="NavDashboard" Content="  &#xE80F;  Dashboard" IsChecked="True"
-                                 Foreground="{StaticResource TextWhite}" FontSize="13" Margin="0,4"
-                                 Background="Transparent" BorderThickness="0" Padding="8,10"
-                                 Checked="Nav_Checked"/>
-                    <RadioButton x:Name="NavController" Content="  &#xE71A;  Controller"
-                                 Foreground="{StaticResource TextGray}" FontSize="13" Margin="0,4"
-                                 Background="Transparent" BorderThickness="0" Padding="8,10"
-                                 Checked="Nav_Checked"/>
-                    <RadioButton x:Name="NavProfiles" Content="  &#xE77B;  Profiles"
-                                 Foreground="{StaticResource TextGray}" FontSize="13" Margin="0,4"
-                                 Background="Transparent" BorderThickness="0" Padding="8,10"
-                                 Checked="Nav_Checked"/>
-                    <RadioButton x:Name="NavSettings" Content="  &#xE713;  Settings"
-                                 Foreground="{StaticResource TextGray}" FontSize="13" Margin="0,4"
-                                 Background="Transparent" BorderThickness="0" Padding="8,10"
-                                 Checked="Nav_Checked"/>
-
-                    <Separator Background="{StaticResource BorderDark}" Margin="16,16,16,16"/>
-
-                    <TextBlock Text="v1.0.0" Foreground="{StaticResource TextGray}" FontSize="10" Margin="16,0,0,0" HorizontalAlignment="Left"/>
-                </StackPanel>
-            </Border>
-
-            <!-- Page content area -->
-            <Grid Grid.Column="1" Margin="24,20,24,20">
-                <!-- Dashboard Page -->
-                <Grid x:Name="PageDashboard" Visibility="Visible">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Text="DASHBOARD" Foreground="{StaticResource TextWhite}" FontSize="22" FontWeight="Bold" Margin="0,0,0,20"/>
-
-                    <!-- Status Cards -->
-                    <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,24">
-                        <!-- Status Card: Connection -->
-                        <Border Background="{StaticResource BgCard}" CornerRadius="8" Margin="0,0,12,0" Padding="16">
-                            <StackPanel>
-                                <TextBlock Text="STATUS" Foreground="{StaticResource TextGray}" FontSize="10" FontWeight="Bold"/>
-                                <TextBlock x:Name="TxtStatus" Text="DISCONNECTED" Foreground="{StaticResource RedPrimary}" FontSize="15" FontWeight="Bold" Margin="0,6,0,0"/>
-                                <TextBlock Text="Controller" Foreground="{StaticResource TextGray}" FontSize="11" Margin="0,4,0,0"/>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Status Card: Battery -->
-                        <Border Background="{StaticResource BgCard}" CornerRadius="8" Margin="6,0,6,0" Padding="16">
-                            <StackPanel>
-                                <TextBlock Text="BATTERY" Foreground="{StaticResource TextGray}" FontSize="10" FontWeight="Bold"/>
-                                <TextBlock x:Name="TxtBattery" Text="--%" Foreground="{StaticResource TextWhite}" FontSize="15" FontWeight="Bold" Margin="0,6,0,0"/>
-                                <TextBlock Text="Charge Level" Foreground="{StaticResource TextGray}" FontSize="11" Margin="0,4,0,0"/>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Status Card: Profile -->
-                        <Border Background="{StaticResource BgCard}" CornerRadius="8" Margin="12,0,0,0" Padding="16">
-                            <StackPanel>
-                                <TextBlock Text="PROFILE" Foreground="{StaticResource TextGray}" FontSize="10" FontWeight="Bold"/>
-                                <TextBlock x:Name="TxtProfile" Text="DEFAULT" Foreground="{StaticResource RedPrimary}" FontSize="15" FontWeight="Bold" Margin="0,6,0,0"/>
-                                <TextBlock Text="Active Mode" Foreground="{StaticResource TextGray}" FontSize="11" Margin="0,4,0,0"/>
-                            </StackPanel>
-                        </Border>
-                    </UniformGrid>
-
-                    <!-- Action Area -->
-                    <Border Grid.Row="2" Background="{StaticResource BgCard}" CornerRadius="8" Padding="20">
-                        <StackPanel VerticalAlignment="Top">
-                            <TextBlock Text="QUICK ACTIONS" Foreground="{StaticResource TextGray}" FontSize="10" FontWeight="Bold" Margin="0,0,0,16"/>
-
-                            <WrapPanel>
-                                <Button x:Name="BtnConnect" Content="CONNECT" Margin="0,0,12,12" Padding="20,12"
-                                        Background="{StaticResource RedPrimary}" Foreground="{StaticResource TextWhite}"
-                                        FontWeight="Bold" FontSize="12" BorderThickness="0" Cursor="Hand"
-                                        Click="BtnConnect_Click"/>
-                                <Button x:Name="BtnDisconnect" Content="DISCONNECT" Margin="0,0,12,12" Padding="20,12"
-                                        Background="{StaticResource BgPanel}" Foreground="{StaticResource TextGray}"
-                                        FontWeight="Bold" FontSize="12" BorderThickness="1" BorderBrush="{StaticResource BorderDark}" Cursor="Hand"
-                                        Click="BtnDisconnect_Click"/>
-                                <Button x:Name="BtnRumble" Content="TEST RUMBLE" Margin="0,0,12,12" Padding="20,12"
-                                        Background="{StaticResource BgPanel}" Foreground="{StaticResource TextGray}"
-                                        FontWeight="Bold" FontSize="12" BorderThickness="1" BorderBrush="{StaticResource BorderDark}" Cursor="Hand"
-                                        Click="BtnRumble_Click"/>
-                            </WrapPanel>
-
-                            <Separator Background="{StaticResource BorderDark}" Margin="0,16,0,16"/>
-
-                            <TextBlock Text="LOG" Foreground="{StaticResource TextGray}" FontSize="10" FontWeight="Bold" Margin="0,0,0,8"/>
-                            <Border Background="{StaticResource BgDark}" CornerRadius="4" Padding="12" MinHeight="100">
-                                <ScrollViewer x:Name="LogScroller" VerticalScrollBarVisibility="Auto">
-                                    <TextBlock x:Name="TxtLog" Text="Ready." Foreground="{StaticResource TextGray}" FontSize="11"
-                                               FontFamily="Consolas" TextWrapping="Wrap"/>
-                                </ScrollViewer>
-                            </Border>
-                        </StackPanel>
-                    </Border>
-                </Grid>
-
-                <!-- Controller Page -->
-                <Grid x:Name="PageController" Visibility="Collapsed">
-                    <StackPanel>
-                        <TextBlock Text="CONTROLLER" Foreground="{StaticResource TextWhite}" FontSize="22" FontWeight="Bold" Margin="0,0,0,20"/>
-
-                        <Border Background="{StaticResource BgCard}" CornerRadius="8" Padding="24">
-                            <StackPanel>
-                                <TextBlock Text="INPUT MAPPING" Foreground="{StaticResource TextGray}" FontSize="10" FontWeight="Bold" Margin="0,0,0,16"/>
-
-                                <Grid Margin="0,0,0,12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="TRIGGER L2" Foreground="{StaticResource TextGray}" FontSize="11" Margin="0,0,0,4"/>
-                                        <Slider x:Name="SliderL2" Minimum="0" Maximum="255" Value="0"
-                                                Foreground="{StaticResource RedPrimary}" Background="{StaticResource BgPanel}"/>
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="1" Margin="16,0,0,0">
-                                        <TextBlock Text="TRIGGER R2" Foreground="{StaticResource TextGray}" FontSize="11" Margin="0,0,0,4"/>
-                                        <Slider x:Name="SliderR2" Minimum="0" Maximum="255" Value="0"
-                                                Foreground="{StaticResource RedPrimary}" Background="{StaticResource BgPanel}"/>
-                                    </StackPanel>
-                                </Grid>
-
-                                <Grid Margin="0,0,0,12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="VIBRATION LEFT" Foreground="{StaticResource TextGray}" FontSize="11" Margin="0,0,0,4"/>
-                                        <Slider x:Name="SliderVibL" Minimum="0" Maximum="255" Value="0"
-                                                Foreground="{StaticResource RedPrimary}" Background="{StaticResource BgPanel}"/>
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="1" Margin="16,0,0,0">
-                                        <TextBlock Text="VIBRATION RIGHT" Foreground="{StaticResource TextGray}" FontSize="11" Margin="0,0,0,4"/>
-                                        <Slider x:Name="SliderVibR" Minimum="0" Maximum="255" Value="0"
-                                                Foreground="{StaticResource RedPrimary}" Background="{StaticResource BgPanel}"/>
-                                    </StackPanel>
-                                </Grid>
-
-                                <Button Content="APPLY" Margin="0,12,0,0" Padding="24,12"
-                                        Background="{StaticResource RedPrimary}" Foreground="{StaticResource TextWhite}"
-                                        FontWeight="Bold" FontSize="12" BorderThickness="0" Cursor="Hand"
-                                        Click="BtnApply_Click"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                </Grid>
-
-                <!-- Profiles Page -->
-                <Grid x:Name="PageProfiles" Visibility="Collapsed">
-                    <StackPanel>
-                        <TextBlock Text="PROFILES" Foreground="{StaticResource TextWhite}" FontSize="22" FontWeight="Bold" Margin="0,0,0,20"/>
-
-                        <UniformGrid Columns="2">
-                            <Border Background="{StaticResource BgCard}" CornerRadius="8" Padding="20" Margin="0,0,12,12" Cursor="Hand">
-                                <StackPanel>
-                                    <TextBlock Text="DEFAULT" Foreground="{StaticResource RedPrimary}" FontSize="16" FontWeight="Bold"/>
-                                    <TextBlock Text="Standard configuration" Foreground="{StaticResource TextGray}" FontSize="11" Margin="0,6,0,0"/>
-                                </StackPanel>
-                            </Border>
-                            <Border Background="{StaticResource BgCard}" CornerRadius="8" Padding="20" Margin="12,0,0,12" Cursor="Hand">
-                                <StackPanel>
-                                    <TextBlock Text="FPS MODE" Foreground="{StaticResource TextWhite}" FontSize="16" FontWeight="Bold"/>
-                                    <TextBlock Text="Aggressive triggers + aim" Foreground="{StaticResource TextGray}" FontSize="11" Margin="0,6,0,0"/>
-                                </StackPanel>
-                            </Border>
-                            <Border Background="{StaticResource BgCard}" CornerRadius="8" Padding="20" Margin="0,0,12,0" Cursor="Hand">
-                                <StackPanel>
-                                    <TextBlock Text="RACING" Foreground="{StaticResource TextWhite}" FontSize="16" FontWeight="Bold"/>
-                                    <TextBlock Text="Smooth triggers, full rumble" Foreground="{StaticResource TextGray}" FontSize="11" Margin="0,6,0,0"/>
-                                </StackPanel>
-                            </Border>
-                            <Border Background="{StaticResource BgCard}" CornerRadius="8" Padding="20" Margin="12,0,0,0" Cursor="Hand">
-                                <StackPanel>
-                                    <TextBlock Text="+ NEW" Foreground="{StaticResource TextGray}" FontSize="16" FontWeight="Bold"/>
-                                    <TextBlock Text="Create custom profile" Foreground="{StaticResource TextGray}" FontSize="11" Margin="0,6,0,0"/>
-                                </StackPanel>
-                            </Border>
-                        </UniformGrid>
-                    </StackPanel>
-                </Grid>
-
-                <!-- Settings Page -->
-                <Grid x:Name="PageSettings" Visibility="Collapsed">
-                    <StackPanel>
-                        <TextBlock Text="SETTINGS" Foreground="{StaticResource TextWhite}" FontSize="22" FontWeight="Bold" Margin="0,0,0,20"/>
-
-                        <Border Background="{StaticResource BgCard}" CornerRadius="8" Padding="24">
-                            <StackPanel>
-                                <TextBlock Text="APPLICATION" Foreground="{StaticResource TextGray}" FontSize="10" FontWeight="Bold" Margin="0,0,0,16"/>
-
-                                <CheckBox Content="Start with Windows" Foreground="{StaticResource TextWhite}" FontSize="12" Margin="0,0,0,12"/>
-                                <CheckBox Content="Minimize to tray" Foreground="{StaticResource TextWhite}" FontSize="12" Margin="0,0,0,12"/>
-                                <CheckBox Content="Auto-connect on launch" Foreground="{StaticResource TextWhite}" FontSize="12" Margin="0,0,0,12"/>
-
-                                <Separator Background="{StaticResource BorderDark}" Margin="0,16,0,16"/>
-
-                                <TextBlock Text="ABOUT" Foreground="{StaticResource TextGray}" FontSize="10" FontWeight="Bold" Margin="0,0,0,8"/>
-                                <TextBlock Text="DualSense Red v1.0.0" Foreground="{StaticResource TextGray}" FontSize="11"/>
-                                <TextBlock Text="github.com/Nestor53top/DUALSENSERED" Foreground="{StaticResource RedPrimary}" FontSize="11" Margin="0,4,0,0"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                </Grid>
-            </Grid>
-        </Grid>
-
-        <!-- Bottom Status Bar -->
-        <Border Grid.Row="2" Background="{StaticResource BgPanel}" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,1,0,0" Padding="12,8">
-            <Grid>
-                <TextBlock x:Name="TxtStatusBar" Text="Ready" Foreground="{StaticResource TextGray}" FontSize="11" VerticalAlignment="Center"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Ellipse x:Name="DotConnection" Width="8" Height="8" Fill="{StaticResource RedDark}" Margin="0,0,6,0"/>
-                    <TextBlock x:Name="TxtConnection" Text="No device" Foreground="{StaticResource TextGray}" FontSize="11"/>
-                </StackPanel>
-            </Grid>
-        </Border>
+            <Button x:Name="BtnTap" Content="TAP" Margin="0,24,0,0"
+                    Width="160" Height="52"
+                    Background="#E5143C" Foreground="White"
+                    FontSize="18" FontWeight="Bold"
+                    FontFamily="{StaticResource PixelFont}"
+                    BorderThickness="0" Cursor="Hand"
+                    Click="BtnTap_Click">
+                <Button.Effect>
+                    <DropShadowEffect BlurRadius="20" ShadowDepth="0" Color="#E5143C" Opacity="0.8"/>
+                </Button.Effect>
+            </Button>
+        </StackPanel>
     </Grid>
 </Window>
