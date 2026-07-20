@@ -1,4 +1,4 @@
-name: Build WPF
+name: Build & Screenshot
 
 on:
   push:
@@ -28,9 +28,44 @@ jobs:
       - name: Publish
         run: dotnet publish -c Release --no-restore -o ./artifacts
 
-      - name: Upload Artifact
+      - name: Zip Artifact
+        run: Compress-Archive -Path ./artifacts/* -DestinationPath ./DualSenseRed-Release.zip
+
+      - name: Upload Release Zip
         uses: actions/upload-artifact@v4
         with:
           name: DualSenseRed-Release
-          path: ./artifacts/
+          path: ./DualSenseRed-Release.zip
+          retention-days: 30
+
+      - name: Extract Zip
+        run: Expand-Archive -Path ./DualSenseRed-Release.zip -DestinationPath ./run -Force
+
+      - name: Launch App & Screenshot
+        shell: powershell
+        run: |
+          Add-Type -AssemblyName System.Windows.Forms
+          Add-Type -AssemblyName System.Drawing
+
+          $exe = Get-ChildItem -Path ./run -Filter "DualSenseRed.exe" -Recurse | Select-Object -First 1
+          if (-not $exe) { Write-Error "EXE not found"; exit 1 }
+
+          Start-Process -FilePath $exe.FullName
+          Start-Sleep -Seconds 5
+
+          $bounds = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+          $bitmap = New-Object System.Drawing.Bitmap($bounds.Width, $bounds.Height)
+          $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+          $graphics.CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
+          $bitmap.Save("./screenshot.png")
+          $graphics.Dispose()
+          $bitmap.Dispose()
+
+          Write-Host "Screenshot saved."
+
+      - name: Upload Screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: DualSenseRed-Screenshot
+          path: ./screenshot.png
           retention-days: 30
