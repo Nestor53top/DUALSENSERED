@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>DualSenseRed</RootNamespace>
+    <AssemblyName>DualSenseRed</AssemblyName>
+    <ApplicationIcon />
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="assets\PixelImpacted-Regular.otf" />
+  </ItemGroup>
+
+</Project>
