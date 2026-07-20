@@ -32,3 +32,5 @@ artifacts/
 Thumbs.db
 .DS_Store
 Desktop.ini
+logs.zip
+logs_output/
