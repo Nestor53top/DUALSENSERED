@@ -32,5 +32,16 @@ artifacts/
 Thumbs.db
 .DS_Store
 Desktop.ini
+
+# Logs & Downloads
 logs.zip
 logs_output/
+logs2.zip
+logs2/
+
+# Downloaded artifacts
+*.zip
+*.png
+*.mp4
+run/
+release_check/
