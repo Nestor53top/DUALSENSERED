@@ -33,15 +33,14 @@ Thumbs.db
 .DS_Store
 Desktop.ini
 
-# Logs & Downloads
-logs.zip
-logs_output/
-logs2.zip
+# Temp / logs
+logs/
 logs2/
+logs3/
+*.log
 
-# Downloaded artifacts
-*.zip
-*.png
-*.mp4
-run/
-release_check/
+# Downloaded
+DualSenseRed-Release.zip
+screenshot_before.png
+screenshot_after.png
+recording.mp4
