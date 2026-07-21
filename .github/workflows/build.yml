@@ -41,9 +41,15 @@ jobs:
       - name: Extract Zip
         run: Expand-Archive -Path ./DualSenseRed-Release.zip -DestinationPath ./run -Force
 
+      - name: Install FFmpeg
+        run: choco install ffmpeg -y
+        shell: powershell
+
       - name: Launch, Screenshot & Record
         shell: powershell
         run: |
+          $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
           Add-Type -AssemblyName System.Windows.Forms
           Add-Type -AssemblyName System.Drawing
           Add-Type @"
@@ -57,14 +63,12 @@ jobs:
           }
           "@
 
-          # Find and launch exe
           $exe = Get-ChildItem -Path ./run -Filter "DualSenseRed.exe" -Recurse | Select-Object -First 1
           if (-not $exe) { Write-Error "EXE not found"; exit 1 }
 
           Start-Process -FilePath $exe.FullName
           Start-Sleep -Seconds 4
 
-          # Take screenshot BEFORE tap
           $bounds = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
           $bitmap = New-Object System.Drawing.Bitmap(1920, 1080)
           $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
@@ -74,7 +78,6 @@ jobs:
           $graphics.Dispose()
           Write-Host "Screenshot before tap saved."
 
-          # Start ffmpeg recording in background
           $recPath = "$env:GITHUB_WORKSPACE\recording.mp4"
           $ffmpeg = Get-Command ffmpeg -ErrorAction SilentlyContinue
           if ($ffmpeg) {
@@ -85,7 +88,6 @@ jobs:
               Write-Host "ffmpeg not found, skipping recording."
           }
 
-          # Move cursor to center of screen and click TAP button
           $screenW = $bounds.Width
           $screenH = $bounds.Height
           $centerX = [int]($screenW / 2)
@@ -100,7 +102,6 @@ jobs:
 
           Start-Sleep -Seconds 3
 
-          # Take screenshot AFTER tap
           $bitmap2 = New-Object System.Drawing.Bitmap(1920, 1080)
           $graphics2 = [System.Drawing.Graphics]::FromImage($bitmap2)
           $graphics2.CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
@@ -111,10 +112,15 @@ jobs:
 
           Start-Sleep -Seconds 2
 
-          # Stop ffmpeg
           Get-Process ffmpeg -ErrorAction SilentlyContinue | Stop-Process -Force
-          Start-Sleep -Seconds 1
+          Start-Sleep -Seconds 2
           Write-Host "Recording stopped."
+
+          if (Test-Path $recPath) {
+              Write-Host "Video recorded: $recPath"
+          } else {
+              Write-Host "Video file not created."
+          }
 
       - name: Upload Screenshot Before
         uses: actions/upload-artifact@v4
